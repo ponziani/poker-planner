@@ -3,8 +3,6 @@
 const TURSO_URL   = 'https://poker-weekend-2026-ponziani.aws-eu-west-1.turso.io';
 const TURSO_TOKEN = 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJleHAiOjE4MTM1MTI1NTIsImlhdCI6MTc4MTk3NjU1MiwiaWQiOiIwMTllZTVjMC1jMjAxLTdmYzEtODhjZS04YjFlM2FiODJhM2IiLCJyaWQiOiIxZTgxMTFkYS00ZDQ1LTRhNjUtYTY1YS1hYTQ2NDJmN2NiZGQifQ.sgcIHGWFi6opxlymsLP1b95UdVcRUkksSX1FcawtnUl9Mo695gvdXiZSqbPdIsozZZzG2Yv1bKzPUiiH-k8yDA';
 
-const HOST_NAME = 'Bob';
-
 const MONTHS_NL = ['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'];
 const DAYS_LONG = ['Zondag','Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Zaterdag'];
 
@@ -46,7 +44,7 @@ async function tursoInit() {
   `);
   await tursoQuery(
     'INSERT INTO votes (name, weekends) VALUES (?, ?) ON CONFLICT(name) DO NOTHING',
-    [{ type: 'text', value: HOST_NAME }, { type: 'text', value: '[]' }]
+    [{ type: 'text', value: 'Bob' }, { type: 'text', value: '[]' }]
   );
 }
 
@@ -200,18 +198,9 @@ function renderNames() {
     return;
   }
   grid.innerHTML = data.names.map(name => {
-    const isHost = name === HOST_NAME;
-    const sel    = state.currentUser === name;
-    const voted  = isHost || (data.votes[name] !== undefined && data.votes[name].length > 0);
-    const count  = (data.votes[name] || []).length;
-    if (isHost) {
-      return `<button class="name-btn name-btn--host" disabled>
-          <span class="ps-chip ps-chip--host" aria-hidden="true"></span>
-          <span class="name-btn__avatar">${initials(name)}</span>
-          <span class="name-btn__label">${name}</span>
-          <span class="name-btn__tag name-btn__tag--host">host</span>
-        </button>`;
-    }
+    const sel   = state.currentUser === name;
+    const voted = data.votes[name] !== undefined && data.votes[name].length > 0;
+    const count = (data.votes[name] || []).length;
     return `<button class="name-btn${sel ? ' selected' : ''}" onclick="selectName('${name}')">
         <span class="ps-chip ${voted ? 'ps-chip--voted' : ''}" aria-hidden="true"></span>
         <span class="name-btn__avatar">${initials(name)}</span>
@@ -219,7 +208,7 @@ function renderNames() {
         ${voted ? `<span class="name-btn__tag">${count}w</span>` : ''}
       </button>`;
   }).join('');
-  document.getElementById('step1Next').disabled = !state.currentUser || state.currentUser === HOST_NAME;
+  document.getElementById('step1Next').disabled = !state.currentUser;
 }
 
 function selectName(name) {
@@ -353,7 +342,7 @@ function getAggregated() {
   const weekendSet = new Set();
   Object.values(data.votes).forEach(satKeys => satKeys.forEach(k => weekendSet.add(k)));
   return [...weekendSet].sort().map(satKey => {
-    const voters = data.names.filter(name => name === HOST_NAME || (data.votes[name] || []).includes(satKey));
+    const voters = data.names.filter(name => (data.votes[name] || []).includes(satKey));
     return { satKey, voters };
   }).sort((a, b) => b.voters.length - a.voters.length || a.satKey.localeCompare(b.satKey));
 }
@@ -361,18 +350,17 @@ function getAggregated() {
 function renderOverview(showToast = false) {
   const agg   = getAggregated();
   const total = data.names.length;
-  const voted = data.names.filter(n => n === HOST_NAME || (data.votes[n] || []).length > 0).length;
+  const voted = Object.values(data.votes).filter(v => v.length > 0).length;
 
   document.getElementById('playerStatus').innerHTML = !data.names.length
     ? `<p class="names-empty" style="font-size:13px;">Nog geen spelers toegevoegd.</p>`
     : data.names.map(name => {
-        const isHost   = name === HOST_NAME;
-        const hasVoted = isHost || (data.votes[name] || []).length > 0;
+        const hasVoted = (data.votes[name] || []).length > 0;
         const count    = (data.votes[name] || []).length;
-        return `<div class="ps-badge ps-badge--${isHost ? 'host' : hasVoted ? 'voted' : 'waiting'}">
-          <span class="ps-chip ${isHost ? 'ps-chip--host' : hasVoted ? 'ps-chip--voted' : ''}" aria-hidden="true"></span>
+        return `<div class="ps-badge ps-badge--${hasVoted ? 'voted' : 'waiting'}">
+          <span class="ps-chip ${hasVoted ? 'ps-chip--voted' : ''}" aria-hidden="true"></span>
           ${name}
-          ${isHost ? `<span class="ps-count">host</span>` : hasVoted ? `<span class="ps-count">${count}</span>` : ''}
+          ${hasVoted ? `<span class="ps-count">${count}</span>` : ''}
         </div>`;
       }).join('');
 
