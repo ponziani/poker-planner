@@ -1,6 +1,6 @@
 /* Poker Weekend Alicante — main.js (Turso backend) */
 
-const TURSO_URL   = 'libsql://poker-weekend-2026-ponziani.aws-eu-west-1.turso.io';
+const TURSO_URL   = 'https://poker-weekend-2026-ponziani.aws-eu-west-1.turso.io';
 const TURSO_TOKEN = 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJleHAiOjE4MTM1MTI1NTIsImlhdCI6MTc4MTk3NjU1MiwiaWQiOiIwMTllZTVjMC1jMjAxLTdmYzEtODhjZS04YjFlM2FiODJhM2IiLCJyaWQiOiIxZTgxMTFkYS00ZDQ1LTRhNjUtYTY1YS1hYTQ2NDJmN2NiZGQifQ.sgcIHGWFi6opxlymsLP1b95UdVcRUkksSX1FcawtnUl9Mo695gvdXiZSqbPdIsozZZzG2Yv1bKzPUiiH-k8yDA';
 
 const MONTHS_NL = ['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'];
@@ -68,34 +68,6 @@ async function tursoAddName(name) {
     'INSERT INTO votes (name, weekends) VALUES (?, ?) ON CONFLICT(name) DO NOTHING',
     [{ type: 'text', value: name }, { type: 'text', value: '[]' }]
   );
-}
-
-/* ── Storage mode toggle ────────────────────────────────────── */
-// Set to true to use localStorage (for local testing without a server)
-// Set to false to use Turso (for production)
-const USE_LOCAL_STORAGE = false;
-const LOCAL_KEY = 'poker-alicante-local';
-
-async function dbInit()              { if (USE_LOCAL_STORAGE) return; await tursoInit(); }
-async function dbLoad()              { USE_LOCAL_STORAGE ? localLoad() : await tursoLoad(); }
-async function dbSave(name, wknds)   { USE_LOCAL_STORAGE ? localSave(name, wknds) : await tursoSave(name, wknds); }
-async function dbAddName(name)       { USE_LOCAL_STORAGE ? localAddName(name) : await tursoAddName(name); }
-
-function localLoad() {
-  try {
-    const p = JSON.parse(localStorage.getItem(LOCAL_KEY) || '{}');
-    data.names = p.names || [];
-    data.votes = p.votes || {};
-  } catch(e) { data.names = []; data.votes = {}; }
-}
-function localSave(name, wknds) {
-  data.votes[name] = wknds;
-  localStorage.setItem(LOCAL_KEY, JSON.stringify({ names: data.names, votes: data.votes }));
-}
-function localAddName(name) {
-  data.names.push(name);
-  data.votes[name] = [];
-  localStorage.setItem(LOCAL_KEY, JSON.stringify({ names: data.names, votes: data.votes }));
 }
 
 /* ── Cashgame-style chip SVG ────────────────────────────────── */
@@ -247,9 +219,8 @@ async function addName() {
   if (!name || data.names.includes(name) || data.names.length >= 15) { input.focus(); return; }
   setLoading(true);
   try {
-    await dbAddName(name);
-    if (!USE_LOCAL_STORAGE) { data.names.push(name); data.votes[name] = []; }
-    else await dbLoad();
+    await tursoAddName(name);
+    data.names.push(name); data.votes[name] = [];
     input.value = '';
     selectName(name);
     renderNames();
@@ -350,7 +321,7 @@ function nextMonth() {
 async function submitVotes() {
   setLoading(true);
   try {
-    await dbSave(state.currentUser, state.selectedWeekends);
+    await tursoSave(state.currentUser, state.selectedWeekends);
     data.votes[state.currentUser] = [...state.selectedWeekends];
     goStep(1);
     renderNames();
@@ -453,16 +424,10 @@ async function init() {
     chipSVG({ color:'green', size: 34 }) +
     chipSVG({ color:'white', size: 34 });
 
-  const modeBadge = document.getElementById('storageBadge');
-  if (modeBadge) {
-    modeBadge.textContent = USE_LOCAL_STORAGE ? '💾 Lokale modus' : '☁ Turso';
-    modeBadge.className   = USE_LOCAL_STORAGE ? 'storage-badge local' : 'storage-badge cloud';
-  }
-
   setLoading(true);
   try {
-    await dbInit();
-    await dbLoad();
+    await tursoInit();
+    await tursoLoad();
     renderNames();
     renderOverview();
   } catch(e) {
