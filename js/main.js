@@ -73,7 +73,7 @@ async function tursoAddName(name) {
 /* ── Storage mode toggle ────────────────────────────────────── */
 // Set to true to use localStorage (for local testing without a server)
 // Set to false to use Turso (for production)
-const USE_LOCAL_STORAGE = true;
+const USE_LOCAL_STORAGE = false;
 const LOCAL_KEY = 'poker-alicante-local';
 
 async function dbInit()              { if (USE_LOCAL_STORAGE) return; await tursoInit(); }
