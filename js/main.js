@@ -1,7 +1,7 @@
 /* Poker Weekend Alicante — main.js (Turso backend) */
 
 const TURSO_URL   = 'libsql://poker-weekend-2026-ponziani.aws-eu-west-1.turso.io';
-const TURSO_TOKEN = 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJleHAiOjE4MTM1MDcxNjQsImlhdCI6MTc4MTk3MTE2NCwiaWQiOiIwMTllZTVjMC1jMjAxLTdmYzEtODhjZS04YjFlM2FiODJhM2IiLCJyaWQiOiIxZTgxMTFkYS00ZDQ1LTRhNjUtYTY1YS1hYTQ2NDJmN2NiZGQifQ.K6VwYCLqwFUQMm9NTIGv0Y5iTrfOl6aqkIRsw6VHNeMdOLyT9EedrOr23bw5i-rJ46TKkuLvc4f1fFI05zRPDg';
+const TURSO_TOKEN = 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJleHAiOjE4MTM1MTI1NTIsImlhdCI6MTc4MTk3NjU1MiwiaWQiOiIwMTllZTVjMC1jMjAxLTdmYzEtODhjZS04YjFlM2FiODJhM2IiLCJyaWQiOiIxZTgxMTFkYS00ZDQ1LTRhNjUtYTY1YS1hYTQ2NDJmN2NiZGQifQ.sgcIHGWFi6opxlymsLP1b95UdVcRUkksSX1FcawtnUl9Mo695gvdXiZSqbPdIsozZZzG2Yv1bKzPUiiH-k8yDA';
 
 const MONTHS_NL = ['Januari','Februari','Maart','April','Mei','Juni','Juli','Augustus','September','Oktober','November','December'];
 const DAYS_LONG = ['Zondag','Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Zaterdag'];
