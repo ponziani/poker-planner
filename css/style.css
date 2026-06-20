@@ -198,6 +198,13 @@ button { font-family: var(--ff-body); cursor: pointer; }
   background: rgba(200,168,75,.14); color: var(--gold);
   border-radius: 99px; padding: 2px 7px; border: 1px solid rgba(200,168,75,.25);
 }
+.name-btn--host {
+  border-color: rgba(200,168,75,.35); background: rgba(200,168,75,.07);
+  color: var(--gold-lt); cursor: default; opacity: 1;
+}
+.name-btn--host:disabled { opacity: 1; }
+.name-btn--host .name-btn__avatar { background: rgba(200,168,75,.25); color: var(--gold); border-color: rgba(200,168,75,.4); }
+.name-btn__tag--host { background: rgba(200,168,75,.2); color: var(--gold); border-color: rgba(200,168,75,.38); }
 
 .add-player { display: flex; gap: 8px; }
 .text-input {
@@ -335,6 +342,7 @@ button { font-family: var(--ff-body); cursor: pointer; }
   padding: 6px 11px; border-radius: 99px;
   font-size: 12px; font-weight: 500; border: 1px solid;
 }
+.ps-badge--host    { background: rgba(200,168,75,.12); border-color: rgba(200,168,75,.38); color: var(--gold-lt); }
 .ps-badge--voted   { background: rgba(200,168,75,.1); border-color: rgba(200,168,75,.28); color: var(--gold-lt); }
 .ps-badge--waiting { background: var(--panel-edge); border-color: var(--border); color: var(--muted-lt); }
 
@@ -342,6 +350,7 @@ button { font-family: var(--ff-body); cursor: pointer; }
   display: inline-block; width: 10px; height: 10px; border-radius: 50%;
   border: 2px solid; flex-shrink: 0;
 }
+.ps-chip--host      { border-color: var(--gold); background: radial-gradient(circle at 35% 35%, var(--gold-lt), var(--gold-dk)); }
 .ps-chip--voted     { border-color: var(--gold); background: radial-gradient(circle at 35% 35%, var(--gold-lt), var(--gold-dk)); }
 .ps-badge--waiting .ps-chip { border-color: var(--muted); background: var(--panel-edge); opacity: .5; }
 
