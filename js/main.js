@@ -423,6 +423,12 @@ async function init() {
     chipSVG({ color:'red',   size: 34 }) +
     chipSVG({ color:'green', size: 34 }) +
     chipSVG({ color:'white', size: 34 });
+  document.getElementById('footerChips').innerHTML =
+    chipSVG({ color:'blue',  size: 30 }) +
+    chipSVG({ color:'red',   size: 30 }) +
+    chipSVG({ color:'green', size: 30 }) +
+    chipSVG({ color:'gold',  size: 30 }) +
+    chipSVG({ color:'white', size: 30 });
 
   setLoading(true);
   try {

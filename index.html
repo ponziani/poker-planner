@@ -7,7 +7,7 @@
   <meta name="description" content="Plan het poker weekend in Alicante. Kies je naam en geef aan wanneer je beschikbaar bent."/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="css/style.css"/>
 </head>
 <body>
@@ -25,9 +25,12 @@
         </div>
       </div>
       <div class="header-chips" aria-hidden="true" id="headerChipsRight"></div>
-      <div id="storageBadge" class="storage-badge"></div>
     </div>
   </header>
+
+  <div class="page-heading">
+    <h1 class="page-heading__title">Wie wil er mee op weekend?</h1>
+  </div>
 
   <main class="layout">
 
@@ -57,7 +60,7 @@
       <section class="panel hidden" id="step2">
         <div class="panel__header">
           <span class="panel__suit red">♥</span>
-          <h2 class="panel__title">Wanneer kan <span id="playerNameDisplay"></span>?</h2>
+          <h2 class="panel__title">Wanneer kan <span id="playerNameDisplay" class="panel__title-name"></span>?</h2>
         </div>
         <p class="panel__sub">Selecteer de weekenden waarop je naar Alicante kan.</p>
 
@@ -109,7 +112,23 @@
   </main>
 
   <footer class="site-footer">
-    <span>♠ Poker Weekend Alicante ♥</span>
+    <div class="footer-artifacts" aria-hidden="true">
+      <div class="footer-card footer-card--back">
+        <div class="footer-card__pattern"></div>
+      </div>
+      <div class="footer-card footer-card--face">
+        <div class="footer-card__corner footer-card__corner--tl"><span>A</span><span>♠</span></div>
+        <div class="footer-card__center">♠</div>
+        <div class="footer-card__corner footer-card__corner--br"><span>A</span><span>♠</span></div>
+      </div>
+      <div class="footer-card footer-card--face footer-card--red">
+        <div class="footer-card__corner footer-card__corner--tl"><span>K</span><span>♥</span></div>
+        <div class="footer-card__center">♥</div>
+        <div class="footer-card__corner footer-card__corner--br"><span>K</span><span>♥</span></div>
+      </div>
+      <div class="footer-chips" id="footerChips"></div>
+    </div>
+    <div class="footer-label">Kaartje leggen</div>
   </footer>
 
   <script src="js/main.js"></script>
