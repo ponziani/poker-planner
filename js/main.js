@@ -345,7 +345,13 @@ async function submitVotes() {
 }
 
 /* ── Overview ───────────────────────────────────────────────── */
-let overviewSelectedSat = null;
+let overviewSelectedSat    = null;
+let overviewSelectedPlayer = null;
+
+function selectOverviewPlayer(name) {
+  overviewSelectedPlayer = overviewSelectedPlayer === name ? null : name;
+  renderOverview();
+}
 
 function selectOverviewWeekend(satKey) {
   overviewSelectedSat = overviewSelectedSat === satKey ? null : satKey;
@@ -374,14 +380,29 @@ function renderOverview(showToast = false) {
   document.getElementById('playerStatus').innerHTML = !data.names.length
     ? `<p class="names-empty" style="font-size:13px;">Nog geen spelers toegevoegd.</p>`
     : data.names.map(name => {
-        const hasVoted = (data.votes[name] || []).length > 0;
-        const count    = (data.votes[name] || []).length;
-        return `<div class="ps-badge ps-badge--${hasVoted ? 'voted' : 'waiting'}">
+        const hasVoted  = (data.votes[name] || []).length > 0;
+        const count     = (data.votes[name] || []).length;
+        const isActive  = overviewSelectedPlayer === name;
+        return `<div class="ps-badge ps-badge--${hasVoted ? 'voted' : 'waiting'}${isActive ? ' ps-badge--active' : ''}" onclick="selectOverviewPlayer('${name}')">
           <span class="ps-chip ${hasVoted ? 'ps-chip--voted' : ''}" aria-hidden="true"></span>
           ${name}
           ${hasVoted ? `<span class="ps-count">${count}</span>` : ''}
         </div>`;
       }).join('');
+
+  const playerDetail = document.getElementById('playerDetail');
+  if (overviewSelectedPlayer && data.names.includes(overviewSelectedPlayer)) {
+    const weekends = data.votes[overviewSelectedPlayer] || [];
+    playerDetail.innerHTML = `
+      <div class="player-detail">
+        <div class="player-detail__name">${overviewSelectedPlayer}</div>
+        ${weekends.length
+          ? `<div class="player-detail__chips">${[...weekends].sort().map(s => `<span class="player-detail__chip">${fmtWeekend(s)}</span>`).join('')}</div>`
+          : `<span class="player-detail__empty">Nog niet gestemd</span>`}
+      </div>`;
+  } else {
+    playerDetail.innerHTML = '';
+  }
 
   if (showToast && state.currentUser) {
     const toast = document.getElementById('savedToast');
