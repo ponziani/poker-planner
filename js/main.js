@@ -217,9 +217,16 @@ function selectName(name) {
   renderNames();
 }
 
+const BLOCKED_NAMES = ['Jochen', 'Smol'];
+
 async function addName() {
   const input = document.getElementById('newNameInput');
   const name  = input.value.trim();
+  if (BLOCKED_NAMES.some(b => b.toLowerCase() === name.toLowerCase())) {
+    showError('Sorry, deze naam is onbekend.');
+    input.focus();
+    return;
+  }
   if (!name || data.names.includes(name) || data.names.length >= 15) { input.focus(); return; }
   setLoading(true);
   try {
@@ -338,13 +345,25 @@ async function submitVotes() {
 }
 
 /* ── Overview ───────────────────────────────────────────────── */
+let overviewSelectedSat = null;
+
+function selectOverviewWeekend(satKey) {
+  overviewSelectedSat = overviewSelectedSat === satKey ? null : satKey;
+  renderOverview();
+}
+
 function getAggregated() {
   const weekendSet = new Set();
   Object.values(data.votes).forEach(satKeys => satKeys.forEach(k => weekendSet.add(k)));
   return [...weekendSet].sort().map(satKey => {
     const voters = data.names.filter(name => (data.votes[name] || []).includes(satKey));
     return { satKey, voters };
-  }).sort((a, b) => b.voters.length - a.voters.length || a.satKey.localeCompare(b.satKey));
+  }).sort((a, b) => {
+    const aBob = a.voters.includes('Bob') ? 1 : 0;
+    const bBob = b.voters.includes('Bob') ? 1 : 0;
+    if (bBob !== aBob) return bBob - aBob;
+    return b.voters.length - a.voters.length || a.satKey.localeCompare(b.satKey);
+  });
 }
 
 function renderOverview(showToast = false) {
@@ -396,8 +415,10 @@ function renderOverview(showToast = false) {
     agg.map(({ satKey, voters }, i) => {
       const pct       = total > 0 ? Math.round((voters.length / total) * 100) : 0;
       const tierClass = i === 0 ? 'bar-fill--top' : voters.length >= maxVotes * 0.6 ? 'bar-fill--mid' : 'bar-fill--low';
-      return `<div class="bar-row">
-          <div class="bar-date">${fmtWeekend(satKey)}</div>
+      const isSelected = overviewSelectedSat === satKey;
+      const hasBob    = voters.includes('Bob');
+      return `<div class="bar-row${isSelected ? ' bar-row--selected' : ''}" onclick="selectOverviewWeekend('${satKey}')">
+          <div class="bar-date">${fmtWeekend(satKey)}${hasBob ? ' <span class="bar-bob">★</span>' : ''}</div>
           <div class="bar-track">
             <div class="bar-fill ${tierClass}" style="width:${Math.max(pct, voters.length > 0 ? 10 : 0)}%">
               ${voters.length > 0 ? `${voters.length}/${total}` : ''}
@@ -407,17 +428,53 @@ function renderOverview(showToast = false) {
         </div>`;
     }).join('');
 
-  document.getElementById('whoSection').innerHTML =
-    `<div class="who-title">Wie kan wanneer</div>` +
-    agg.map(({ satKey, voters }) => `
-      <div class="who-row">
-        <div class="who-date">${fmtWeekend(satKey)}</div>
-        <div class="who-avatars">
-          ${voters.length
-            ? voters.map(v => `<div class="who-avatar" title="${v}">${initials(v)}</div>`).join('')
-            : `<span style="font-size:11px;color:var(--muted);font-style:italic">Niemand</span>`}
+  const whoSection = document.getElementById('whoSection');
+  if (overviewSelectedSat) {
+    const entry     = agg.find(a => a.satKey === overviewSelectedSat);
+    const canList   = entry ? entry.voters : [];
+    const cantList  = data.names.filter(n => (data.votes[n] || []).length > 0 && !(data.votes[n] || []).includes(overviewSelectedSat));
+    const unknownList = data.names.filter(n => (data.votes[n] || []).length === 0);
+    whoSection.innerHTML = `
+      <div class="who-detail">
+        <button class="who-detail__back" onclick="selectOverviewWeekend('${overviewSelectedSat}')">← Alle weekends</button>
+        <div class="who-detail__title">${fmtWeekendLong(overviewSelectedSat)}</div>
+        <div class="who-detail__group">
+          <div class="who-detail__label who-detail__label--can">Kan erbij (${canList.length})</div>
+          <div class="who-avatars">
+            ${canList.length
+              ? canList.map(v => `<div class="who-avatar who-avatar--can" title="${v}">${initials(v)}</div>`).join('')
+              : `<span class="who-none">Niemand</span>`}
+          </div>
         </div>
-      </div>`).join('');
+        <div class="who-detail__group">
+          <div class="who-detail__label who-detail__label--cant">Kan niet (${cantList.length})</div>
+          <div class="who-avatars">
+            ${cantList.length
+              ? cantList.map(v => `<div class="who-avatar who-avatar--cant" title="${v}">${initials(v)}</div>`).join('')
+              : `<span class="who-none">Iedereen kan</span>`}
+          </div>
+        </div>
+        ${unknownList.length ? `
+        <div class="who-detail__group">
+          <div class="who-detail__label who-detail__label--unknown">Nog niet gestemd (${unknownList.length})</div>
+          <div class="who-avatars">
+            ${unknownList.map(v => `<div class="who-avatar" title="${v}">${initials(v)}</div>`).join('')}
+          </div>
+        </div>` : ''}
+      </div>`;
+  } else {
+    whoSection.innerHTML =
+      `<div class="who-title">Klik op een optie voor details</div>` +
+      agg.map(({ satKey, voters }) => `
+        <div class="who-row">
+          <div class="who-date">${fmtWeekend(satKey)}</div>
+          <div class="who-avatars">
+            ${voters.length
+              ? voters.map(v => `<div class="who-avatar" title="${v}">${initials(v)}</div>`).join('')
+              : `<span style="font-size:11px;color:var(--muted);font-style:italic">Niemand</span>`}
+          </div>
+        </div>`).join('');
+  }
 }
 
 /* ── Init ───────────────────────────────────────────────────── */

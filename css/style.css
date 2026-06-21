@@ -390,7 +390,13 @@ button { font-family: var(--ff-body); cursor: pointer; }
 .bar-row {
   display: grid; grid-template-columns: 130px 1fr 38px;
   align-items: center; gap: 9px; margin-bottom: 7px;
+  cursor: pointer; border-radius: var(--radius-sm);
+  padding: 3px 4px; margin-left: -4px; margin-right: -4px;
+  transition: background .12s;
 }
+.bar-row:hover { background: rgba(200,168,75,.06); }
+.bar-row--selected { background: rgba(200,168,75,.1); }
+.bar-bob { color: var(--gold); font-size: 9px; vertical-align: middle; }
 .bar-date { font-size: 11px; color: var(--muted-lt); white-space: nowrap; }
 .bar-track { height: 28px; border-radius: 99px; background: var(--panel-edge); overflow: hidden; }
 .bar-fill {
@@ -404,6 +410,30 @@ button { font-family: var(--ff-body); cursor: pointer; }
 .bar-fill--low { background: var(--panel-lt); color: var(--muted-lt); }
 .bar-num { font-size: 11px; font-weight: 600; color: var(--muted); text-align: right; }
 .bar-num strong { color: var(--text); }
+
+/* Who detail */
+.who-detail { padding-top: .25rem; }
+.who-detail__back {
+  background: none; border: none; color: var(--muted-lt);
+  font-size: 12px; font-weight: 500; padding: 0; margin-bottom: .75rem;
+  cursor: pointer; transition: color .12s;
+}
+.who-detail__back:hover { color: var(--text); }
+.who-detail__title {
+  font-family: var(--ff-display); font-size: .95rem; font-weight: 600;
+  color: var(--text); letter-spacing: .03em; margin-bottom: .9rem;
+}
+.who-detail__group { margin-bottom: .75rem; }
+.who-detail__label {
+  font-size: 10px; font-weight: 600; letter-spacing: .09em;
+  text-transform: uppercase; margin-bottom: .35rem;
+}
+.who-detail__label--can     { color: #5aaa6a; }
+.who-detail__label--cant    { color: var(--red-lt); }
+.who-detail__label--unknown { color: var(--muted); }
+.who-avatar--can  { background: rgba(90,170,106,.2); border-color: rgba(90,170,106,.4); color: #5aaa6a; }
+.who-avatar--cant { background: rgba(200,64,58,.15); border-color: rgba(200,64,58,.35); color: var(--red-lt); }
+.who-none { font-size: 11px; color: var(--muted); font-style: italic; }
 
 /* Who */
 .who-section { margin-top: 1rem; }
