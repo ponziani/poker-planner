@@ -203,7 +203,6 @@ function renderNames() {
     const count = (data.votes[name] || []).length;
     return `<button class="name-btn${sel ? ' selected' : ''}" onclick="selectName('${name}')">
         <span class="ps-chip ${voted ? 'ps-chip--voted' : ''}" aria-hidden="true"></span>
-        <span class="name-btn__avatar">${initials(name)}</span>
         <span class="name-btn__label">${name}</span>
         ${voted ? `<span class="name-btn__tag">${count}w</span>` : ''}
       </button>`;
@@ -481,7 +480,7 @@ function renderOverview(showToast = false) {
           <div class="who-detail__label who-detail__label--can">Kan erbij (${canList.length})</div>
           <div class="who-avatars">
             ${canList.length
-              ? canList.map(v => `<div class="who-avatar who-avatar--can" title="${v}">${initials(v)}</div>`).join('')
+              ? canList.map(v => `<div class="who-avatar who-avatar--can" title="${v}">${v}</div>`).join('')
               : `<span class="who-none">Niemand</span>`}
           </div>
         </div>
@@ -489,7 +488,7 @@ function renderOverview(showToast = false) {
           <div class="who-detail__label who-detail__label--cant">Kan niet (${cantList.length})</div>
           <div class="who-avatars">
             ${cantList.length
-              ? cantList.map(v => `<div class="who-avatar who-avatar--cant" title="${v}">${initials(v)}</div>`).join('')
+              ? cantList.map(v => `<div class="who-avatar who-avatar--cant" title="${v}">${v}</div>`).join('')
               : `<span class="who-none">Iedereen kan</span>`}
           </div>
         </div>
@@ -497,7 +496,7 @@ function renderOverview(showToast = false) {
         <div class="who-detail__group">
           <div class="who-detail__label who-detail__label--unknown">Nog niet gestemd (${unknownList.length})</div>
           <div class="who-avatars">
-            ${unknownList.map(v => `<div class="who-avatar" title="${v}">${initials(v)}</div>`).join('')}
+            ${unknownList.map(v => `<div class="who-avatar" title="${v}">${v}</div>`).join('')}
           </div>
         </div>` : ''}
       </div>`;
@@ -509,7 +508,7 @@ function renderOverview(showToast = false) {
           <div class="who-date">${fmtWeekend(satKey)}</div>
           <div class="who-avatars">
             ${voters.length
-              ? voters.map(v => `<div class="who-avatar" title="${v}">${initials(v)}</div>`).join('')
+              ? voters.map(v => `<div class="who-avatar" title="${v}">${v}</div>`).join('')
               : `<span style="font-size:11px;color:var(--muted);font-style:italic">Niemand</span>`}
           </div>
         </div>`).join('');
