@@ -246,6 +246,13 @@ async function addName() {
 document.getElementById('newNameInput').addEventListener('keydown', e => {
   if (e.key === 'Enter') addName();
 });
+document.getElementById('newNameInput').addEventListener('input', () => {
+  if (state.currentUser) {
+    state.currentUser = null;
+    state.selectedWeekends = [];
+    renderNames();
+  }
+});
 
 /* ── Step 2: Calendar ───────────────────────────────────────── */
 function renderCal() {
