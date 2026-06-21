@@ -132,7 +132,6 @@ button { font-family: var(--ff-body); cursor: pointer; }
 }
 @media (max-width: 860px) {
   .layout { grid-template-columns: 1fr; }
-  .col-overview { order: -1; }
 }
 
 /* ── Panel ────────────────────────────────────────────────── */
