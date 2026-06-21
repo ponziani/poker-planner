@@ -208,7 +208,8 @@ function renderNames() {
         ${voted ? `<span class="name-btn__tag">${count}w</span>` : ''}
       </button>`;
   }).join('');
-  document.getElementById('step1Next').disabled = !state.currentUser;
+  const inputVal = document.getElementById('newNameInput')?.value.trim() || '';
+  document.getElementById('step1Next').disabled = !state.currentUser && !inputVal;
 }
 
 function selectName(name) {
@@ -219,39 +220,49 @@ function selectName(name) {
 
 const BLOCKED_NAMES = ['Jochen', 'Smol'];
 
-async function addName() {
+async function proceedToCalendar() {
   const input = document.getElementById('newNameInput');
-  const name  = input.value.trim();
-  if (BLOCKED_NAMES.some(b => b.toLowerCase() === name.toLowerCase())) {
-    showError('Sorry, deze naam is onbekend.');
-    input.focus();
-    return;
-  }
-  if (!name || data.names.includes(name) || data.names.length >= 15) { input.focus(); return; }
-  setLoading(true);
-  try {
-    await tursoAddName(name);
-    data.names.push(name); data.votes[name] = [];
+  const typed = input.value.trim();
+
+  if (typed) {
+    if (BLOCKED_NAMES.some(b => b.toLowerCase() === typed.toLowerCase())) {
+      showError('Sorry, deze naam is onbekend.');
+      input.focus();
+      return;
+    }
+    if (!data.names.includes(typed)) {
+      if (data.names.length >= 15) return;
+      setLoading(true);
+      try {
+        await tursoAddName(typed);
+        data.names.push(typed);
+        data.votes[typed] = [];
+        renderOverview();
+      } catch(e) {
+        showError('Kon naam niet opslaan. Controleer je verbinding.');
+        setLoading(false);
+        return;
+      } finally {
+        setLoading(false);
+      }
+    }
+    selectName(typed);
     input.value = '';
-    selectName(name);
-    renderNames();
-    renderOverview();
-  } catch(e) {
-    showError('Kon naam niet opslaan. Controleer je verbinding.');
-  } finally {
-    setLoading(false);
   }
+
+  if (!state.currentUser) return;
+  goStep(2);
 }
 
 document.getElementById('newNameInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') addName();
+  if (e.key === 'Enter') proceedToCalendar();
 });
 document.getElementById('newNameInput').addEventListener('input', () => {
   if (state.currentUser) {
     state.currentUser = null;
     state.selectedWeekends = [];
-    renderNames();
   }
+  renderNames();
 });
 
 /* ── Step 2: Calendar ───────────────────────────────────────── */

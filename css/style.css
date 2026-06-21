@@ -208,14 +208,6 @@ button { font-family: var(--ff-body); cursor: pointer; }
 }
 .text-input::placeholder { color: var(--muted); }
 .text-input:focus { border-color: rgba(200,168,75,.5); }
-.btn-add {
-  width: 40px; height: 40px; border-radius: var(--radius-sm);
-  border: 1px solid var(--border); background: var(--panel-edge);
-  color: var(--gold); font-size: 1.4rem;
-  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-  transition: all .15s;
-}
-.btn-add:hover { background: rgba(200,168,75,.12); border-color: var(--border-md); }
 
 /* ── Buttons ──────────────────────────────────────────────── */
 .btn-primary {
